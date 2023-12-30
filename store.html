@@ -1,0 +1,73 @@
+<!-- store.html (Page de la boutique) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique en Ligne</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+<header>
+    <div class="logo">
+        <a href="https://discord.gg/z3vZPXmQzm"></a>
+        <img src="coli-logo.png" alt="COLI Logo">
+    </div>
+    <nav>
+        <ul>
+            <li><a href="https://gouverementofcoli.github.io/fr">COLI - GOUV</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <h1>Notre Boutique</h1>
+
+    <div class="product">
+        <img src="produit1.png" alt="Produit 1">
+        <h2>Rôle Personnalisé</h2>
+        <p>Obtenez un rôle à votre effigie</p>
+        <p>Prix: 2000</p>
+        <button onclick="acheter('Produit 1', 2000)">Acheter</button>
+    </div>
+
+    <div class="product">
+        <img src="produit2.png" alt="Produit 2">
+        <h2>Salon Personnalisé + Perms Admin</h2>
+        <p>Un salon rien qu'à vous que vous pourrez administrer</p>
+        <p>Prix: 20K</p>
+        <button onclick="acheter('Produit 2', 20000)">Acheter</button>
+    </div>
+
+
+    <script>
+        function acheter(nomProduit, prixProduit) {
+            var username = prompt("Entrez votre nom d'utilisateur:");
+            if (username) {
+                var confirmation = confirm("Confirmez votre achat:\n" +
+                    "Produit: " + nomProduit + "\n" +
+                    "Prix: $" + prixProduit.toFixed(2) + "\n" +
+                    "Utilisateur: " + username);
+
+                if (confirmation) {
+                    envoyerWebhook(nomProduit, prixProduit, username);
+                }
+            }
+        }
+
+        function envoyerWebhook(nomProduit, prixProduit, username) {
+            var webhookURL = "https://discordapp.com/api/webhooks/1190793877481861150/YeSyCToF71O6z7tGH5FVZo7UkmpBSFpu-GXqKTSkf7h4bf5ZBMB2yhIweSJ0eCW19Flx";
+            var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur: " + username;
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content: message,
+                }),
+            });
+        }
+    </script>
+</body>
+</html>
