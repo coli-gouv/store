@@ -49,18 +49,22 @@
         var nomProduit;  // Variable globale pour le nom du produit
         var prixProduit; // Variable globale pour le prix du produit
         var accessToken; // Variable globale pour l'access_token
+        var aDejaClique = false; // Variable pour suivre si le bouton a déjà été cliqué
 
         function acheter(nomProduitParam, prixProduitParam) {
-            // Assigner les valeurs des paramètres aux variables globales
-            nomProduit = nomProduitParam;
-            prixProduit = prixProduitParam;
+            if (!aDejaClique) {
+                // Assigner les valeurs des paramètres aux variables globales
+                nomProduit = nomProduitParam;
+                prixProduit = prixProduitParam;
 
-            // Remplacez par votre client ID Discord
-            var clientId = '1148997555326296206';
-            var redirectUri = encodeURIComponent('https://gouvernementofcoli.github.io/store/store.html');
-            var authUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
+                // Remplacez par votre client ID Discord
+                var clientId = '1148997555326296206';
+                var redirectUri = encodeURIComponent('https://gouvernementofcoli.github.io/store/store.html');
+                var authUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
 
-            window.location.href = authUrl;
+                window.location.href = authUrl;
+                aDejaClique = true; // Marquer que le bouton a été cliqué
+            }
         }
 
         // Gestion de la réponse Discord
