@@ -1,4 +1,4 @@
-<!-- store.html (Page de la boutique) -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boutique en Ligne</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-
 </head>
 <header>
     <div class="logo">
@@ -47,21 +46,52 @@
     </div>
 
     <script>
-        function acheter(nomProduit, prixProduit) {
-            var username = prompt("Entrez votre nom d'utilisateur:");
-            if (username) {
-                var confirmation = confirm("Confirmez votre achat:\n" +
-                    "Produit: " + nomProduit + "\n" +
-                    "Prix: $" + prixProduit.toFixed(2) + "\n" +
-                    "Utilisateur: " + username);
+        var nomProduit;  // Variable globale pour le nom du produit
+        var prixProduit; // Variable globale pour le prix du produit
+        var accessToken; // Variable globale pour l'access_token
 
-                if (confirmation) {
-                    envoyerWebhook(nomProduit, prixProduit, username);
-                }
-            }
+        function acheter(nomProduitParam, prixProduitParam) {
+            // Assigner les valeurs des paramètres aux variables globales
+            nomProduit = nomProduitParam;
+            prixProduit = prixProduitParam;
+
+            // Remplacez par votre client ID Discord
+            var clientId = '1148997555326296206';
+            var redirectUri = encodeURIComponent('https://gouvernementofcoli.github.io/store/store.html');
+            var authUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
+
+            window.location.href = authUrl;
         }
 
-        function envoyerWebhook(nomProduit, prixProduit, username) {
+        // Gestion de la réponse Discord
+        window.onload = function () {
+            var params = new URLSearchParams(window.location.hash.slice(1));
+            accessToken = params.get('access_token');
+
+            if (accessToken) {
+                // Si l'authentification Discord réussit, récupérez les informations de l'utilisateur
+                fetch('https://discordapp.com/api/users/@me', {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        var username = data.username;
+                        var discriminator = data.discriminator;
+
+                        var discordUsername = `${username}#${discriminator}`;
+                        
+                        // Envoi direct des informations via le webhook
+                        envoyerWebhook(username);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des données utilisateur Discord:', error);
+                    });
+            }
+        };
+
+        function envoyerWebhook(username) {
             var webhookURL = "https://discordapp.com/api/webhooks/1190793877481861150/YeSyCToF71O6z7tGH5FVZo7UkmpBSFpu-GXqKTSkf7h4bf5ZBMB2yhIweSJ0eCW19Flx";
             var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur: " + username;
 
@@ -74,6 +104,8 @@
                     content: message,
                 }),
             });
+
+            alert("Votre achat a été effectué avec succès!");
         }
     </script>
 </body>
