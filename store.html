@@ -21,6 +21,9 @@
 <body>
     <h1>Notre Boutique</h1>
 
+    <!-- Bouton de connexion -->
+    <button onclick="connexionDiscord()">Se Connecter</button>
+
     <div class="product">
         <img src="produit1.png" alt="RolePers">
         <h2>Rôle Personnalisé</h2>
@@ -53,20 +56,16 @@
 
         function acheter(nomProduitParam, prixProduitParam) {
             // Vérifier si l'utilisateur est déjà authentifié
-            if (!authentifie) {
+            if (authentifie) {
                 // Assigner les valeurs des paramètres aux variables globales
                 nomProduit = nomProduitParam;
                 prixProduit = prixProduitParam;
 
-                // Remplacez par votre client ID Discord
-                var clientId = '1148997555326296206';
-                var redirectUri = encodeURIComponent('https://gouvernementofcoli.github.io/store/store.html');
-                var authUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
-
-                window.location.href = authUrl;
-            } else {
-                // Si l'utilisateur est déjà authentifié, envoyer directement les informations via le webhook
+                // Envoyer directement les informations via le webhook
                 envoyerWebhook();
+            } else {
+                // Sinon, informer l'utilisateur de se connecter d'abord
+                alert("Veuillez vous connecter d'abord en utilisant le bouton 'Se Connecter'");
             }
         }
 
@@ -76,34 +75,23 @@
             accessToken = params.get('access_token');
 
             if (accessToken) {
-                // Si l'authentification Discord réussit, récupérez les informations de l'utilisateur
-                fetch('https://discordapp.com/api/users/@me', {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        var username = data.username;
-                        var discriminator = data.discriminator;
-
-                        var discordUsername = `${username}#${discriminator}`;
-
-                        // Enregistrez l'état d'authentification
-                        authentifie = true;
-
-                        // Envoi direct des informations via le webhook
-                        envoyerWebhook(username);
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la récupération des données utilisateur Discord:', error);
-                    });
+                // Si l'authentification Discord réussit, enregistrez l'état d'authentification
+                authentifie = true;
             }
         };
 
-        function envoyerWebhook(username) {
+        function connexionDiscord() {
+            // Remplacez par votre client ID Discord
+            var clientId = '1148997555326296206';
+            var redirectUri = encodeURIComponent('https://gouvernementofcoli.github.io/store/store.html');
+            var authUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
+
+            window.location.href = authUrl;
+        }
+
+        function envoyerWebhook() {
             var webhookURL = "https://discordapp.com/api/webhooks/1190793877481861150/YeSyCToF71O6z7tGH5FVZo7UkmpBSFpu-GXqKTSkf7h4bf5ZBMB2yhIweSJ0eCW19Flx";
-            var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur: " + username;
+            var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur connecté via Discord";
 
             fetch(webhookURL, {
                 method: 'POST',
