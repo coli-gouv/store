@@ -91,26 +91,34 @@
 
         function envoyerWebhook() {
             fetch('https://discordapp.com/api/users/@me', {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+            headers: {
+            Authorization: `Bearer ${accessToken}`,
+            },
             })
-            var userId = data.id;
-            var webhookURL = "https://discordapp.com/api/webhooks/1190793877481861150/YeSyCToF71O6z7tGH5FVZo7UkmpBSFpu-GXqKTSkf7h4bf5ZBMB2yhIweSJ0eCW19Flx";
-            var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur : <@" + userId+ ">";
+        .then(response => response.json())
+        .then(data => {
+        var userId = data.id;
+        var webhookURL = "https://discordapp.com/api/webhooks/1190793877481861150/YeSyCToF71O6z7tGH5FVZo7UkmpBSFpu-GXqKTSkf7h4bf5ZBMB2yhIweSJ0eCW19Flx";
+        var message = "Nouvel achat!\nProduit: " + nomProduit + "\nPrix: $" + prixProduit.toFixed(2) + "\nUtilisateur : <@" + userId + ">";
 
-            fetch(webhookURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: message,
-                }),
-            });
+        // Envoyer le message via le webhook
+        fetch(webhookURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: message,
+            }),
+        });
 
-            alert("Votre achat a été effectué avec succès!");
-        }
+        alert("Votre achat a été effectué avec succès!");
+    })
+    .catch(error => {
+        console.error('Erreur lors de la récupération des données utilisateur Discord:', error);
+    });
+}
+
     </script>
 </body>
 </html>
